@@ -1,8 +1,25 @@
+import sys
+
+from tracer.tracer import Tracer
 from parser.ast_parser import parse_file
 from storage.sqlite_storage import Storage
 
+
+# -----------------------------
+# Start Runtime Tracer
+# -----------------------------
+tracer = Tracer()
+sys.settrace(tracer.trace)
+
+# Parse Python File
 variables = parse_file("examples/test.py")
 
+# Stop Tracer
+sys.settrace(None)
+
+# -----------------------------
+# Week 1 Database Code
+# -----------------------------
 storage = Storage()
 
 storage.create_table()
