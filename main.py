@@ -1,18 +1,27 @@
 import sys
+# print("Main Started")
 
 from tracer.tracer import Tracer
-from parser.ast_parser import parse_file
-from storage.sqlite_storage import Storage
+#from parser.ast_parser import parse_file
+#from storage.sqlite_storage import Storage
+from tracer.runtime_executor import execute_script
 
 
 # -----------------------------
 # Start Runtime Tracer
 # -----------------------------
 tracer = Tracer()
+# Tracer ચાલુ કરો
 sys.settrace(tracer.trace)
 
+
 # Parse Python File
-variables = parse_file("examples/test.py")
+#variables = parse_file("examples/test.py")
+
+# Script ચલાવો
+execute_script("examples/test.py")
+
+
 
 # Stop Tracer
 sys.settrace(None)
@@ -20,18 +29,18 @@ sys.settrace(None)
 # -----------------------------
 # Week 1 Database Code
 # -----------------------------
-storage = Storage()
+# storage = Storage()
 
-storage.create_table()
+# storage.create_table()
 
-storage.clear_table()
+# storage.clear_table()
 
-for variable in variables:
-    storage.insert_variable(variable)
+# for variable in variables:
+#     storage.insert_variable(variable)
 
-print("All Variables Saved")
+# print("All Variables Saved")
 
-rows = storage.get_all_variables()
+# rows = storage.get_all_variables()
 
-for row in rows:
-    print(row)
+# for row in rows:
+#     print(row)
