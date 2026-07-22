@@ -25,3 +25,14 @@ class RuntimeStorage:
         """, (line, function, str(variables)))
 
         self.conn.commit()
+    def clear_table(self):
+     self.cursor.execute("DELETE FROM runtime_log")
+     self.conn.commit()    
+    
+    def get_all_runtime(self):
+     self.cursor.execute("""
+        SELECT line, function, variables
+        FROM runtime_log
+        ORDER BY id
+    """)
+     return self.cursor.fetchall()

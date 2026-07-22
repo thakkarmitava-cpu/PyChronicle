@@ -11,7 +11,9 @@ from tracer.runtime_executor import execute_script
 # Start Runtime Tracer
 # -----------------------------
 tracer = Tracer()
+
 # Tracer ચાલુ કરો
+tracer.storage.clear_table()
 sys.settrace(tracer.trace)
 
 

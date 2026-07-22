@@ -5,6 +5,7 @@ class Tracer:
      def __init__(self):
         self.storage = RuntimeStorage()
         self.storage.create_table()
+        self.previous_variables = {}
 
      def trace(self, frame, event, arg):
 
@@ -26,12 +27,21 @@ class Tracer:
         for key, value in frame.f_locals.items():
             if not key.startswith("__"):
                 variables[key] = value
+        delta = {}
 
-        print("Variables :", variables)
+        for key, value in variables.items():
+         if (
+         key not in self.previous_variables
+         or self.previous_variables[key] != value
+         ):
+          delta[key] = value
+
+        self.previous_variables = variables.copy()
+        print("Delta :", delta)
         self.storage.insert_runtime(
                      frame.f_lineno,
                      frame.f_code.co_name,
-                    variables
+                    delta
                              )
         print("-" * 40)
 
