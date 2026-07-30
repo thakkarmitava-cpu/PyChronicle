@@ -117,15 +117,21 @@ class PyChronicleUI(App):
       content.update(text) 
 
     def build_code_view(self, current_line):
-        code = ""
+        code = []
 
-        for line_no, source_line in enumerate(self.source_lines, start=1):
+        start = max(1, current_line - 3)
+        end = min(len(self.source_lines), current_line + 3)
+
+        for line_no in range(start, end + 1):
+          source_line = self.source_lines[line_no - 1]
+
           if line_no == current_line:
-            code += f">>> {source_line}\n"
-        else:
-            code += f"    {source_line}\n"
+            code.append(f">>> {source_line}")
+          else:
+            code.append(f"    {source_line}")
 
-        return code       
+        return "\n".join(code)
+   
 
 
 
