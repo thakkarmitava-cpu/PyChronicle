@@ -20,14 +20,26 @@ class PyChronicleUI(App):
          f"Function : {function}\n\n"
          "Delta\n"
          "----------------------\n"
-        f"{variables}\n\n"
-        f"Code\n"
-        f"----------------------\n"
-        f"{self.source_lines[line-1]}"
+        f"{variables}\n"
+        )
+         code = self.build_code_view(line)
+         text = (
+         "PyChronicle\n\n"
+         f"Step : {self.current_index + 1}/{len(self.runtime_data)}\n\n"
+         f"Line : {line}\n"
+         f"Function : {function}\n\n"
+         "Delta\n"
+         "----------------------\n"
+         f"{variables}\n\n"
+         "Code\n"
+         "----------------------\n"
+        f"{code}"
          )
         else:
          text = "No Runtime Data"
 
+
+      
         yield Static(text, id="content")
         yield Slider(min=0, max=len(self.runtime_data)-1, value=0, id="timeline")
         yield Horizontal(
@@ -75,7 +87,7 @@ class PyChronicleUI(App):
         f"----------------------\n"
         f"{variables}"
      )
-      code = self.source_lines[line - 1]
+      code = self.build_code_view(line)
       text += f"\n\nCode\n----------------------\n{code}"
 
       content.update(text) 
@@ -99,11 +111,21 @@ class PyChronicleUI(App):
         f"{variables}"
      )
 
-      code = self.source_lines[line - 1]
+      code = self.build_code_view(line)
       text += f"\n\nCode\n----------------------\n{code}"
-
       content = self.query_one("#content", Static)
-      content.update(text)      
+      content.update(text) 
+
+    def build_code_view(self, current_line):
+        code = ""
+
+        for line_no, source_line in enumerate(self.source_lines, start=1):
+          if line_no == current_line:
+            code += f">>> {source_line}\n"
+        else:
+            code += f"    {source_line}\n"
+
+        return code       
 
 
 
