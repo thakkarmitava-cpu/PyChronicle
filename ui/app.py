@@ -36,16 +36,21 @@ class PyChronicleUI(App):
         f"{code}"
          )
         else:
-         text = "No Runtime Data"
+         text = (
+    "PyChronicle\n\n"
+    "No runtime execution data available.\n\n"
+    "Run the tracer first to generate execution history."
+)
 
 
       
         yield Static(text, id="content")
         yield Slider(min=0, max=len(self.runtime_data)-1, value=0, id="timeline")
-        yield Horizontal(
-        Button("Previous", id="prev"),
-         Button("Next", id="next")
-        )
+        yield  Horizontal(
+    Button("◀ Previous", id="prev"),
+    Button("Next ▶", id="next"),
+    id="navigation"
+)
 
 
         yield Footer()
@@ -107,6 +112,7 @@ class PyChronicleUI(App):
      text = (
         "PyChronicle\n\n"
         f"Step : {self.current_index + 1}/{len(self.runtime_data)}\n\n"
+        f"Total Records : {len(self.runtime_data)}\n\n"
         f"Line : {line}\n"
         f"Function : {function}\n\n"
         "Delta\n"
@@ -121,6 +127,8 @@ class PyChronicleUI(App):
     
     def build_code_view(self, current_line):
         code = []
+        code.append("Line | Source Code")
+        code.append("-------------------------------")
 
         start = max(1, current_line - 3)
         end = min(len(self.source_lines), current_line + 3)
