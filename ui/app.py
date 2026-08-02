@@ -44,11 +44,20 @@ class PyChronicleUI(App):
 
 
       
-        yield Static(text, id="content")
-        yield Slider(min=0, max=len(self.runtime_data)-1, value=0, id="timeline")
+        yield Static(text, id="content",  expand=True)
+        yield Slider( min=0,max=max(0, len(self.runtime_data) - 1),value=self.current_index, id="timeline",)
+
         yield  Horizontal(
-    Button("◀ Previous", id="prev"),
-    Button("Next ▶", id="next"),
+    Button(
+        "◀ Previous",
+        id="prev",
+        disabled=self.current_index == 0
+    ),
+    Button(
+        "Next ▶",
+        id="next",
+        disabled=self.current_index == len(self.runtime_data) - 1
+    ),
     id="navigation"
 )
 
@@ -69,7 +78,7 @@ class PyChronicleUI(App):
 
     # content.update(text)
     def on_button_pressed(self, event: Button.Pressed):
-      print(event.button.id)
+      print("Slider moved:", event.value)
 
       if event.button.id == "next":
         if self.current_index < len(self.runtime_data) - 1:
@@ -98,15 +107,20 @@ class PyChronicleUI(App):
     #   content.update(text) 
       slider = self.query_one("#timeline", Slider)
       slider.value = self.current_index
+      
       self.update_content()
+      
+      self.update_buttons()
 
     def on_slider_changed(self, event: Slider.Changed):
       print("Slider moved:", event.value)
       self.current_index = int(event.value)
 
-  
       self.update_content()
-
+      
+      self.update_buttons()
+    
+      # Update runtime information and code preview
     def update_content(self):
      line, function, variables = self.runtime_data[self.current_index]
      text = (
@@ -124,6 +138,16 @@ class PyChronicleUI(App):
      )
      content = self.query_one("#content", Static)
      content.update(text)
+    # Enable or disable navigation buttons
+    def update_buttons(self):
+     prev = self.query_one("#prev", Button)
+     next_btn = self.query_one("#next", Button)
+
+     prev.disabled = self.current_index == 0
+     next_btn.disabled = (
+        self.current_index == len(self.runtime_data) - 1
+    )  
+     # Build highlighted code preview
     
     def build_code_view(self, current_line):
         code = []
