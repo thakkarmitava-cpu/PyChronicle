@@ -129,9 +129,9 @@ class PyChronicleUI(App):
           source_line = self.source_lines[line_no - 1]
 
           if line_no == current_line:
-            code.append(f">>> {source_line}")
+            code.append(f">>>   {line_no:2} |{source_line}")
           else:
-            code.append(f"    {source_line}")
+            code.append(f"     {line_no:2} |    {source_line}")
 
         return "\n".join(code)
    
