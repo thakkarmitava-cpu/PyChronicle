@@ -13,15 +13,15 @@ class PyChronicleUI(App):
         if self.runtime_data:
          line, function, variables = self.runtime_data[self.current_index]
 
-         text = (
-         "PyChronicle\n\n"
-         f"Step : {self.current_index + 1}/{len(self.runtime_data)}\n\n"
-         f"Line : {line}\n"
-         f"Function : {function}\n\n"
-         "Delta\n"
-         "----------------------\n"
-        f"{variables}\n"
-        )
+        #  text = (
+        #  "PyChronicle\n\n"
+        #  f"Step : {self.current_index + 1}/{len(self.runtime_data)}\n\n"
+        #  f"Line : {line}\n"
+        #  f"Function : {function}\n\n"
+        #  "Delta\n"
+        #  "----------------------\n"
+        # f"{variables}\n"
+        # )
          code = self.build_code_view(line)
          text = (
          "PyChronicle\n\n"
@@ -74,48 +74,51 @@ class PyChronicleUI(App):
         if self.current_index > 0:
             self.current_index -= 1
 
-      content = self.query_one("#content", Static)
+      # content = self.query_one("#content", Static)
 
-      line, function, variables = self.runtime_data[self.current_index]
+    #   line, function, variables = self.runtime_data[self.current_index]
 
-      text = (
-        f"PyChronicle\n\n"
-        f"Step : {self.current_index + 1}/{len(self.runtime_data)}\n\n"
-        f"Line : {line}\n"
-        f"Function : {function}\n\n"
-        f"Delta\n"
-        f"----------------------\n"
-        f"{variables}"
-     )
-      code = self.build_code_view(line)
-      text += f"\n\nCode\n----------------------\n{code}"
+    #   text = (
+    #     f"PyChronicle\n\n"
+    #     f"Step : {self.current_index + 1}/{len(self.runtime_data)}\n\n"
+    #     f"Line : {line}\n"
+    #     f"Function : {function}\n\n"
+    #     f"Delta\n"
+    #     f"----------------------\n"
+    #     f"{variables}"
+    #  )
+    #   code = self.build_code_view(line)
+    #   text += f"\n\nCode\n----------------------\n{code}"
 
-      content.update(text) 
+    #   content.update(text) 
       slider = self.query_one("#timeline", Slider)
       slider.value = self.current_index
+      self.update_content()
+
     def on_slider_changed(self, event: Slider.Changed):
       print("Slider moved:", event.value)
       self.current_index = int(event.value)
 
-      row = self.runtime_data[self.current_index]
-      line = row[0]
-      function = row[1]
-      variables = row[2]
+  
+      self.update_content()
 
-      text = (
+    def update_content(self):
+     line, function, variables = self.runtime_data[self.current_index]
+     text = (
+        "PyChronicle\n\n"
         f"Step : {self.current_index + 1}/{len(self.runtime_data)}\n\n"
         f"Line : {line}\n"
         f"Function : {function}\n\n"
-        f"Delta\n"
-        f"----------------------\n"
-        f"{variables}"
+        "Delta\n"
+        "----------------------\n"
+        f"{variables}\n\n"
+        "Code\n"
+        "----------------------\n"
+        f"{self.build_code_view(line)}"
      )
-
-      code = self.build_code_view(line)
-      text += f"\n\nCode\n----------------------\n{code}"
-      content = self.query_one("#content", Static)
-      content.update(text) 
-
+     content = self.query_one("#content", Static)
+     content.update(text)
+    
     def build_code_view(self, current_line):
         code = []
 
