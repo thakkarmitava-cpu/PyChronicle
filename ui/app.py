@@ -126,18 +126,34 @@ class PyChronicleUI(App):
     def update_content(self):
      line, function, variables = self.runtime_data[self.current_index]
      text = (
-        "PyChronicle\n\n"
-        f"Step : {self.current_index + 1}/{len(self.runtime_data)}\n\n"
-        f"Total Records : {len(self.runtime_data)}\n\n"
-        f"Line : {line}\n"
-        f"Function : {function}\n\n"
-        f"{self.build_watch_panel()}\n\n"
-        "Delta\n"
-        "----------------------\n"
-        f"{variables}\n\n"
-        "Code\n"
-        "----------------------\n"
-        f"{self.build_code_view(line)}"
+        "PyChronicle Runtime Viewer\n"
+        + "=" * 35 + "\n\n"
+
+        + f"Step : {self.current_index + 1}/{len(self.runtime_data)}\n"
+        + f"Total Records : {len(self.runtime_data)}\n\n"
+
+        + f"Line : {line}\n"
+        + f"Function : {function}\n\n"
+
+        + self.build_watch_panel()
+
+        + "\n\n"
+
+        + "=" * 30
+        + "\nDelta\n"
+        + "=" * 30
+        + "\n"
+
+        + f"{variables}"
+
+        + "\n\n"
+
+        + "=" * 30
+        + "\nCode\n"
+        + "=" * 30
+        + "\n"
+
+        + self.build_code_view(line)
      )
      content = self.query_one("#content", Static)
      content.update(text)
@@ -171,8 +187,9 @@ class PyChronicleUI(App):
         return "\n".join(code)
     def build_watch_panel(self):
         panel = []
-        panel.append("Watch Variables")
-        panel.append("----------------------")
+        panel.append("=" * 30)
+        panel.append(" Watch Variables ")
+        panel.append("=" * 30)
 
         # Stores the latest values of watched variables
         watched_values = {var: "-" for var in self.watched_variables}
