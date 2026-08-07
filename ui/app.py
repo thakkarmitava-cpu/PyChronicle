@@ -1,3 +1,4 @@
+import ast
 from storage.runtime_storage import RuntimeStorage
 from textual.app import App
 from textual.widgets import Header, Footer, Static, Button
@@ -173,13 +174,29 @@ class PyChronicleUI(App):
         panel.append("Watch Variables")
         panel.append("----------------------")
 
-        for variable in self.watched_variables:
-            panel.append(f"{variable} = -")
+        # Stores the latest values of watched variables
+        watched_values = {var: "-" for var in self.watched_variables}
+
+        # Read runtime history from the beginning up to current step
+        for i in range(self.current_index + 1):
+            _, _, variables = self.runtime_data[i]
+
+            try:
+               variables = ast.literal_eval(variables)
+            except Exception:
+               variables = {}
+
+        # Update watched variable values
+            for var in self.watched_variables:
+              if var in variables:
+                watched_values[var] = variables[var]
+
+    # Display the latest values
+        for var in self.watched_variables:
+            panel.append(f"{var} = {watched_values[var]}")
 
         return "\n".join(panel)
    
-
-
 
 if __name__ == "__main__":
     app = PyChronicleUI()
