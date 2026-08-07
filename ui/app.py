@@ -13,16 +13,6 @@ class PyChronicleUI(App):
         if self.runtime_data:
          line, function, variables = self.runtime_data[self.current_index]
 
-        #  text = (
-        #  "PyChronicle\n\n"
-        #  f"Step : {self.current_index + 1}/{len(self.runtime_data)}\n\n"
-        #  f"Line : {line}\n"
-        #  f"Function : {function}\n\n"
-        #  "Delta\n"
-        #  "----------------------\n"
-        # f"{variables}\n"
-        # )
-         code = self.build_code_view(line)
          text = (
          "PyChronicle\n\n"
          f"Step : {self.current_index + 1}/{len(self.runtime_data)}\n\n"
@@ -30,36 +20,20 @@ class PyChronicleUI(App):
          f"Function : {function}\n\n"
          "Delta\n"
          "----------------------\n"
-         f"{variables}\n\n"
-         "Code\n"
-         "----------------------\n"
-        f"{code}"
+        f"{variables}\n\n"
+        f"Code\n"
+        f"----------------------\n"
+        f"{self.source_lines[line-1]}"
          )
         else:
-         text = (
-    "PyChronicle\n\n"
-    "No runtime execution data available.\n\n"
-    "Run the tracer first to generate execution history."
-)
+         text = "No Runtime Data"
 
-
-      
-        yield Static(text, id="content",  expand=True)
-        yield Slider( min=0,max=max(0, len(self.runtime_data) - 1),value=self.current_index, id="timeline",)
-
-        yield  Horizontal(
-    Button(
-        "◀ Previous",
-        id="prev",
-        disabled=self.current_index == 0
-    ),
-    Button(
-        "Next ▶",
-        id="next",
-        disabled=self.current_index == len(self.runtime_data) - 1
-    ),
-    id="navigation"
-)
+        yield Static(text, id="content")
+        yield Slider(min=0, max=len(self.runtime_data)-1, value=0, id="timeline")
+        yield Horizontal(
+        Button("Previous", id="prev"),
+         Button("Next", id="next")
+        )
 
 
         yield Footer()
@@ -78,7 +52,7 @@ class PyChronicleUI(App):
 
     # content.update(text)
     def on_button_pressed(self, event: Button.Pressed):
-      print("Slider moved:", event.value)
+      print(event.button.id)
 
       if event.button.id == "next":
         if self.current_index < len(self.runtime_data) - 1:
@@ -88,85 +62,48 @@ class PyChronicleUI(App):
         if self.current_index > 0:
             self.current_index -= 1
 
-      # content = self.query_one("#content", Static)
+      content = self.query_one("#content", Static)
 
-    #   line, function, variables = self.runtime_data[self.current_index]
+      line, function, variables = self.runtime_data[self.current_index]
 
-    #   text = (
-    #     f"PyChronicle\n\n"
-    #     f"Step : {self.current_index + 1}/{len(self.runtime_data)}\n\n"
-    #     f"Line : {line}\n"
-    #     f"Function : {function}\n\n"
-    #     f"Delta\n"
-    #     f"----------------------\n"
-    #     f"{variables}"
-    #  )
-    #   code = self.build_code_view(line)
-    #   text += f"\n\nCode\n----------------------\n{code}"
+      text = (
+        f"PyChronicle\n\n"
+        f"Step : {self.current_index + 1}/{len(self.runtime_data)}\n\n"
+        f"Line : {line}\n"
+        f"Function : {function}\n\n"
+        f"Delta\n"
+        f"----------------------\n"
+        f"{variables}"
+     )
+      code = self.source_lines[line - 1]
+      text += f"\n\nCode\n----------------------\n{code}"
 
-    #   content.update(text) 
+      content.update(text) 
       slider = self.query_one("#timeline", Slider)
       slider.value = self.current_index
-      
-      self.update_content()
-      
-      self.update_buttons()
-
     def on_slider_changed(self, event: Slider.Changed):
       print("Slider moved:", event.value)
       self.current_index = int(event.value)
 
-      self.update_content()
-      
-      self.update_buttons()
-    
-      # Update runtime information and code preview
-    def update_content(self):
-     line, function, variables = self.runtime_data[self.current_index]
-     text = (
-        "PyChronicle\n\n"
+      row = self.runtime_data[self.current_index]
+      line = row[0]
+      function = row[1]
+      variables = row[2]
+
+      text = (
         f"Step : {self.current_index + 1}/{len(self.runtime_data)}\n\n"
-        f"Total Records : {len(self.runtime_data)}\n\n"
         f"Line : {line}\n"
         f"Function : {function}\n\n"
-        "Delta\n"
-        "----------------------\n"
-        f"{variables}\n\n"
-        "Code\n"
-        "----------------------\n"
-        f"{self.build_code_view(line)}"
+        f"Delta\n"
+        f"----------------------\n"
+        f"{variables}"
      )
-     content = self.query_one("#content", Static)
-     content.update(text)
-    # Enable or disable navigation buttons
-    def update_buttons(self):
-     prev = self.query_one("#prev", Button)
-     next_btn = self.query_one("#next", Button)
 
-     prev.disabled = self.current_index == 0
-     next_btn.disabled = (
-        self.current_index == len(self.runtime_data) - 1
-    )  
-     # Build highlighted code preview
-    
-    def build_code_view(self, current_line):
-        code = []
-        code.append("Line | Source Code")
-        code.append("-------------------------------")
+      code = self.source_lines[line - 1]
+      text += f"\n\nCode\n----------------------\n{code}"
 
-        start = max(1, current_line - 3)
-        end = min(len(self.source_lines), current_line + 3)
-
-        for line_no in range(start, end + 1):
-          source_line = self.source_lines[line_no - 1]
-
-          if line_no == current_line:
-            code.append(f">>>   {line_no:2} |{source_line}")
-          else:
-            code.append(f"     {line_no:2} |    {source_line}")
-
-        return "\n".join(code)
-   
+      content = self.query_one("#content", Static)
+      content.update(text)      
 
 
 
