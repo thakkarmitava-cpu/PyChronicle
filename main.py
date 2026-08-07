@@ -12,7 +12,7 @@ from tracer.runtime_executor import execute_script
 # -----------------------------
 tracer = Tracer()
 
-# Tracer ચાલુ કરો
+# Tracer 
 tracer.storage.clear_table()
 sys.settrace(tracer.trace)
 
@@ -20,7 +20,7 @@ sys.settrace(tracer.trace)
 # Parse Python File
 #variables = parse_file("examples/test.py")
 
-# Script ચલાવો
+# Script 
 execute_script("examples/test.py")
 
 

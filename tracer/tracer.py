@@ -11,11 +11,11 @@ class Tracer:
 
         filename = os.path.basename(frame.f_code.co_filename)
 
-        # ફક્ત test.py trace કરવું
+        #  test.py trace 
         if filename != "test.py":
               return self.trace
 
-        # ફક્ત line event
+        #  line event
         if event != "line":
             return self.trace
 
