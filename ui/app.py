@@ -2,7 +2,7 @@ import ast
 
 from storage.runtime_storage import RuntimeStorage
 from textual.app import App
-from textual.widgets import Header, Footer, Static, Button
+from textual.widgets import Header, Footer, Static, Button, Checkbox
 from textual_slider import Slider
 from textual.containers import Horizontal
 from pathlib import Path
@@ -116,18 +116,38 @@ class PyChronicleUI(App):
 
         # Main viewer + separate Watch Variables panel
         yield Horizontal(
-            Static(
-                text,
-                id="content"
-            ),
+            Static(text, id="content", expand=True),
 
             Static(
                 self.build_watch_panel(),
-                id="watch_panel"
-            ),
+                id="watch_panel",
+                expand=True
+    ),
 
-            id="viewer"
-        )
+    id="viewer"
+)
+
+        yield Horizontal(
+            Checkbox(
+                "x",
+                value="x" in self.watched_variables,
+                id="watch_x"
+    ),
+
+            Checkbox(
+                "count",
+                value="count" in self.watched_variables,
+                id="watch_count"
+    ),
+
+            Checkbox(
+                "total",
+                value="total" in self.watched_variables,
+                id="watch_total"
+    ),
+
+    id="watch_controls"
+)
 
         # Timeline
         yield Slider(
@@ -380,6 +400,28 @@ class PyChronicleUI(App):
  
         return "\n".join(panel)
 
+    def on_checkbox_changed(self, event: Checkbox.Changed):
+
+        variable_map = {
+            "watch_x": "x",
+            "watch_count": "count",
+            "watch_total": "total"
+    }
+
+        variable = variable_map.get(event.checkbox.id)
+
+        if variable is None:
+           return
+
+        if event.value:
+            if variable not in self.watched_variables:
+                self.watched_variables.append(variable)
+        else:
+            if variable in self.watched_variables:
+                self.watched_variables.remove(variable)
+
+        watch_panel = self.query_one("#watch_panel", Static)
+        watch_panel.update(self.build_watch_panel())
 
 if __name__ == "__main__":
     app = PyChronicleUI()
