@@ -4,7 +4,7 @@ from storage.runtime_storage import RuntimeStorage
 from textual.app import App
 from textual.widgets import Header, Footer, Static, Button, Checkbox
 from textual_slider import Slider
-from textual.containers import Horizontal
+from textual.containers import Horizontal, VerticalScroll
 from pathlib import Path
 
 
@@ -116,7 +116,14 @@ class PyChronicleUI(App):
 
         # Main viewer + separate Watch Variables panel
         yield Horizontal(
-            Static(text, id="content", expand=True),
+
+            VerticalScroll(
+                Static(
+                    text,
+                    id="runtime_text"
+                ),
+                id="content"
+    ),
 
             Static(
                 self.build_watch_panel(),
@@ -275,7 +282,7 @@ class PyChronicleUI(App):
 
         # Update main viewer
         content = self.query_one(
-            "#content",
+            "#runtime_text",
             Static
         )
 
