@@ -346,62 +346,38 @@ class PyChronicleUI(App):
 
         panel = []
 
-        panel.append(
-            "WATCH VARIABLES"
-        )
+        panel.append("WATCH VARIABLES")
+        panel.append("=" * 25)
 
-        panel.append(
-            "=" * 25
-        )
-
-        # Initially no value
+        # Only these variables are displayed
         watched_values = {
             variable: "-"
-            for variable
-            in self.watched_variables
-        }
+            for variable in self.watched_variables
+    }
 
-        # Read runtime history up to
-        # the current timeline position
-        for i in range(
-            self.current_index + 1
-        ):
+        # Read runtime history up to the current timeline position
+        for i in range(self.current_index + 1):
 
-            _, _, variables = (
-                self.runtime_data[i]
-            )
+            _, _, variables = self.runtime_data[i]
 
             try:
-
-                variables = ast.literal_eval(
-                    variables
-                )
-
+                variables = ast.literal_eval(variables)
             except (ValueError, SyntaxError):
-
                 variables = {}
 
-            # Update only watched variables
-            for variable in (
-                self.watched_variables
-            ):
+        # Update ONLY selected/watched variables
+            for variable in self.watched_variables:
 
                 if variable in variables:
+                    watched_values[variable] = variables[variable]
 
-                    watched_values[
-                        variable
-                    ] = variables[variable]
-
-        # Display watched variables
-        for variable in (
-            self.watched_variables
-        ):
+    # Display ONLY watched variables
+        for variable in self.watched_variables:
 
             panel.append(
-                f"{variable} = "
-                f"{watched_values[variable]}"
-            )
-
+                f"{variable} = {watched_values[variable]}"
+        )
+ 
         return "\n".join(panel)
 
 
