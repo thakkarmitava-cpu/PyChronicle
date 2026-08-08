@@ -29,12 +29,19 @@ def main():
 
     if args.command == "run":
 
+        # Check whether file exists
         if not os.path.isfile(args.script):
             print(f"Error: File not found: {args.script}")
             return
 
+        # Check Python file extension
         if not args.script.endswith(".py"):
             print("Error: Please provide a Python (.py) file.")
+            return
+
+        # Check whether file is empty
+        if os.path.getsize(args.script) == 0:
+            print(f"Error: Python file is empty: {args.script}")
             return
 
         print(f"Running PyChronicle on: {args.script}")
