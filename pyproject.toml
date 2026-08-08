@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pychronicle"
+version = "1.0.0"
+description = "Python Runtime Execution Visualizer"
+requires-python = ">=3.10"
+dependencies = [
+    "click",
+    "textual",
+    "textual-slider"
+]
+
+[project.scripts]
+pychronicle = "main:cli"
+
+[tool.setuptools]
+py-modules = ["main"]
+
+[tool.setuptools.packages.find]
+include = ["tracer*", "storage*", "parser*", "ui*"]

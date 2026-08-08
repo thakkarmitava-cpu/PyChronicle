@@ -376,8 +376,18 @@ class PyChronicleUI(App):
             for variable in self.watched_variables
     }
 
-    # Read runtime delta history up to the current timeline position
-        for i in range(self.current_index + 1):
+        # No runtime data available
+        if not self.runtime_data:
+           return watched_values
+
+        # Make sure current index is valid
+        end_index = min(
+           self.current_index + 1,
+           len(self.runtime_data)
+    )
+
+        # Read runtime history up to current timeline position
+        for i in range(end_index):
 
             _, _, variables = self.runtime_data[i]
 
@@ -387,11 +397,11 @@ class PyChronicleUI(App):
             except (ValueError, SyntaxError, TypeError):
                 variables = {}
 
-        # Update only selected variables
+            # Update only selected variables
             for variable in self.watched_variables:
 
-                if variable in variables:
-                   watched_values[variable] = variables[variable]
+                 if variable in variables:
+                    watched_values[variable] = variables[variable]
 
         return watched_values
 
@@ -404,6 +414,10 @@ class PyChronicleUI(App):
         panel.append("=" * 25)
 
         watched_values = self.get_watched_values()
+
+        if not self.watched_variables:
+            panel.append("No variables selected.")
+            return "\n".join(panel)
 
         # Display only selected variables
         for variable in self.watched_variables:
