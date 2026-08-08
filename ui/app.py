@@ -362,6 +362,33 @@ class PyChronicleUI(App):
 
         return "\n".join(code)
 
+    def get_watched_values(self):
+
+        watched_values = {
+            variable: "-"
+            for variable in self.watched_variables
+    }
+
+    # Read runtime delta history up to the current timeline position
+        for i in range(self.current_index + 1):
+
+            _, _, variables = self.runtime_data[i]
+
+            try:
+                variables = ast.literal_eval(variables)
+
+            except (ValueError, SyntaxError, TypeError):
+                variables = {}
+
+        # Update only selected variables
+            for variable in self.watched_variables:
+
+                if variable in variables:
+                   watched_values[variable] = variables[variable]
+
+        return watched_values
+
+
     def build_watch_panel(self):
 
         panel = []
@@ -369,35 +396,15 @@ class PyChronicleUI(App):
         panel.append("WATCH VARIABLES")
         panel.append("=" * 25)
 
-        # Only these variables are displayed
-        watched_values = {
-            variable: "-"
-            for variable in self.watched_variables
-    }
+        watched_values = self.get_watched_values()
 
-        # Read runtime history up to the current timeline position
-        for i in range(self.current_index + 1):
-
-            _, _, variables = self.runtime_data[i]
-
-            try:
-                variables = ast.literal_eval(variables)
-            except (ValueError, SyntaxError):
-                variables = {}
-
-        # Update ONLY selected/watched variables
-            for variable in self.watched_variables:
-
-                if variable in variables:
-                    watched_values[variable] = variables[variable]
-
-    # Display ONLY watched variables
+        # Display only selected variables
         for variable in self.watched_variables:
 
             panel.append(
                 f"{variable} = {watched_values[variable]}"
         )
- 
+
         return "\n".join(panel)
 
     def on_checkbox_changed(self, event: Checkbox.Changed):
