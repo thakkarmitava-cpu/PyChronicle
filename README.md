@@ -6,6 +6,8 @@ PyChronicle is a Python AST-based execution analyzer that parses Python source c
 
 ## Features
 
+## Week 1
+
 - Parse Python source code
 - Detect variable assignments
 - Detect tuple assignments
@@ -46,6 +48,7 @@ PyChronicle is a Python AST-based execution analyzer that parses Python source c
 - Added empty Python file validation.
 - Added user-friendly error messages for invalid inputs.
 - Added CLI help and usage information.
+- Addwd ClI packaging using Click.
 
 #### CLI Usage
 
@@ -97,6 +100,7 @@ python cli.py --help
 - Textual
 - sys.settrace
 - textual-slider
+- Click
 
 ## Current Features
 
@@ -193,3 +197,5 @@ Tested with:
 - Previous/Next Navigation
 - Code Highlighting
 - Runtime Viewer
+- Watch Variables 
+- Variable Filtering
